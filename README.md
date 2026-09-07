@@ -15,11 +15,10 @@ Docs: [https://archforge.lesofn.com](https://archforge.lesofn.com)
 
 ```
 archforge/
-├── ArchForge/          # backend :8080 / :8081
+├── ArchForge/          # backend + contracts :8080 / :8081
+│   └── spec/           # openapi.yaml · enums.yaml
 ├── ArchForgeAdmin/     # this repo :8848 → :8080
-├── ArchForgeWeb/       # C-end :3000 → :8081
-├── ArchForgeDocs/
-└── ArchForgeSpec/      # OpenAPI + enums
+└── ArchForgeWeb/       # C-end :3000 → :8081
 ```
 
 | Item | Value |
@@ -29,7 +28,7 @@ archforge/
 | Dev proxy | Vite `/api` → `http://localhost:8080` |
 | Auth | sa-token; cookie `authorized-token` |
 | Success body | `{ code, message, data }` (`code === 0`) |
-| Contract | `../ArchForgeSpec/api/openapi.yaml` |
+| Contract | `../ArchForge/spec/openapi.yaml` |
 
 Do not point this app at `server-web` :8081. The C-end client is `ArchForgeWeb`.
 
@@ -43,7 +42,7 @@ flowchart LR
     HTTP["utils/http — axios PureHttp<br/>ApiResponse<T> · token refresh queue"]
   end
   SA["server-admin :8080<br/>sa-token · {code,message,data}"]
-  SPEC["ArchForgeSpec<br/>openapi.yaml · enums.yaml"]
+  SPEC["ArchForge/spec/<br/>openapi.yaml · enums.yaml"]
 
   B --> VIEWS --> HTTP -->|"/api (vite proxy)"| SA
   SPEC -.|"gen:api → schema.d.ts"| HTTP
@@ -55,7 +54,7 @@ flowchart LR
 API and enum types are **generated, never hand-written**:
 
 ```bash
-pnpm gen:api   # src/types/schema.d.ts from ../ArchForgeSpec/api/openapi.yaml
+pnpm gen:api   # src/types/schema.d.ts from ../ArchForge/spec/openapi.yaml
 ```
 
 - `src/types/schema.d.ts` — request/response shapes from the OpenAPI contract

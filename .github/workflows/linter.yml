@@ -20,12 +20,13 @@ jobs:
         with:
           path: ArchForgeAdmin
 
-      # gen:api resolves ../ArchForgeSpec from the repo root — keep the two repos side by side.
-      - name: Checkout ArchForgeSpec (contract source)
+      # gen:api resolves ../ArchForge/spec/openapi.yaml from the repo root —
+      # keep the two repos side by side.
+      - name: Checkout ArchForge (contract source)
         uses: actions/checkout@v6
         with:
-          repository: ${{ github.repository_owner }}/ArchForgeSpec
-          path: ArchForgeSpec
+          repository: ${{ github.repository_owner }}/ArchForge
+          path: ArchForge
 
       - name: Install Node.js
         uses: actions/setup-node@v6
@@ -58,10 +59,11 @@ jobs:
         run: |
           pnpm gen:api
           git diff --exit-code src/types/schema.d.ts \
-            || (echo "::error::schema.d.ts is out of sync with ArchForgeSpec/api/openapi.yaml — run pnpm gen:api and commit" && exit 1)
-          (cd ../ArchForgeSpec && npm ci --silent && node scripts/gen-enums.mjs)
+            || (echo "::error::schema.d.ts is out of sync with ArchForge/spec/openapi.yaml — run pnpm gen:api and commit" && exit 1)
+          (cd ../ArchForge/scripts && npm ci --silent)
+          node ../ArchForge/scripts/gen-enums.mjs
           git diff --exit-code src/types/enums.generated.ts \
-            || (echo "::error::enums.generated.ts is out of sync with ArchForgeSpec/enums/enums.yaml" && exit 1)
+            || (echo "::error::enums.generated.ts is out of sync with ArchForge/spec/enums.yaml" && exit 1)
 
       - name: Test
         run: pnpm test

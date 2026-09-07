@@ -15,11 +15,10 @@ ArchForge 的 **管理端 UI**（不是裸的 vue-pure-admin 模板）。对接�
 
 ```
 archforge/
-├── ArchForge/          # 后端 :8080 / :8081
+├── ArchForge/          # 后端 + 契约 :8080 / :8081
+│   └── spec/           # openapi.yaml · enums.yaml
 ├── ArchForgeAdmin/     # 本仓库 :8848 → :8080
-├── ArchForgeWeb/       # C 端 :3000 → :8081
-├── ArchForgeDocs/
-└── ArchForgeSpec/      # OpenAPI + 枚举
+└── ArchForgeWeb/       # C 端 :3000 → :8081
 ```
 
 | 项 | 值 |
@@ -29,7 +28,7 @@ archforge/
 | 开发代理 | Vite `/api` → `http://localhost:8080` |
 | 认证 | sa-token；Cookie `authorized-token` |
 | 成功响应 | `{ code, message, data }`，`code === 0` 为成功 |
-| 契约 | `../ArchForgeSpec/api/openapi.yaml` |
+| 契约 | `../ArchForge/spec/openapi.yaml` |
 
 不要把本仓库指到 `server-web` :8081。C 端在 `ArchForgeWeb`。
 
@@ -43,7 +42,7 @@ flowchart LR
     HTTP["utils/http —— axios PureHttp<br/>ApiResponse<T> · token 刷新队列"]
   end
   SA["server-admin :8080<br/>sa-token · {code,message,data}"]
-  SPEC["ArchForgeSpec<br/>openapi.yaml · enums.yaml"]
+  SPEC["ArchForge/spec/<br/>openapi.yaml · enums.yaml"]
 
   B --> VIEWS --> HTTP -->|"/api（vite 代理）"| SA
   SPEC -.|"gen:api → schema.d.ts"| HTTP
@@ -55,7 +54,7 @@ flowchart LR
 API 与枚举类型**全部生成，不手写**：
 
 ```bash
-pnpm gen:api   # src/types/schema.d.ts，来自 ../ArchForgeSpec/api/openapi.yaml
+pnpm gen:api   # src/types/schema.d.ts，来自 ../ArchForge/spec/openapi.yaml
 ```
 
 - `src/types/schema.d.ts` —— OpenAPI 契约中的请求/响应结构

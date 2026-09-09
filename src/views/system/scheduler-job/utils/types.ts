@@ -1,4 +1,4 @@
-export interface QuartzFormItemProps {
+export interface SchedulerFormItemProps {
   id?: number;
   jobName: string;
   jobGroup: string;
@@ -11,6 +11,6 @@ export interface QuartzFormItemProps {
   concurrent: boolean;
 }
 
-export interface QuartzFormProps {
-  formInline: QuartzFormItemProps;
+export interface SchedulerFormProps {
+  formInline: SchedulerFormItemProps;
 }

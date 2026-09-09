@@ -77,7 +77,7 @@ menus:
   pureRole: Role Manage
   pureSystemMenu: Menu Manage
   pureDept: Dept Manage
-  pureQuartz: Scheduled Tasks
+  pureSchedulerJob: Scheduled Tasks
   pureSysMonitor: System Monitor
   pureOnlineUser: Online User
   pureLoginLog: Login Log

@@ -54,11 +54,11 @@ const systemManagementRouter = {
       }
     },
     {
-      path: "/system/quartz/index",
-      name: "SystemQuartz",
+      path: "/system/scheduler-job/index",
+      name: "SystemSchedulerJob",
       meta: {
         icon: "ri:time-line",
-        title: "menus.pureQuartz",
+        title: "menus.pureSchedulerJob",
         roles: ["admin"]
       }
     }

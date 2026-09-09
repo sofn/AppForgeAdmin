@@ -77,7 +77,7 @@ menus:
   pureRole: 角色管理
   pureSystemMenu: 菜单管理
   pureDept: 部门管理
-  pureQuartz: 定时任务
+  pureSchedulerJob: 定时任务
   pureSysMonitor: 系统监控
   pureOnlineUser: 在线用户
   pureLoginLog: 登录日志

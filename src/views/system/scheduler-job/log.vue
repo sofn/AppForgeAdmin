@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
-import { listQuartzLogs, type QuartzLog } from "@/api/quartz";
+import { listSchedulerLogs, type SchedulerLog } from "@/api/scheduler";
 import type { PaginationProps } from "@pureadmin/table";
 import { logColumns } from "./utils/log-columns";
 import { PureTableBar } from "@/components/RePureTableBar";
@@ -11,7 +11,7 @@ const props = defineProps<{
 }>();
 
 const loading = ref(false);
-const dataList = ref<QuartzLog[]>([]);
+const dataList = ref<SchedulerLog[]>([]);
 const pagination = ref<PaginationProps>({
   total: 0,
   pageSize: 10,
@@ -25,7 +25,7 @@ async function load() {
   if (loading.value) return;
   loading.value = true;
   try {
-    const { code, data } = await listQuartzLogs({
+    const { code, data } = await listSchedulerLogs({
       jobId: props.jobId,
       currentPage: pagination.value.currentPage,
       pageSize: pagination.value.pageSize

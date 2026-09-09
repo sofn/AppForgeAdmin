@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useQuartz } from "./utils/hook";
+import { useSchedulerJob } from "./utils/hook";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 
@@ -13,7 +13,7 @@ import Promotion from "~icons/ep/promotion";
 import Document from "~icons/ep/document";
 
 defineOptions({
-  name: "SystemQuartz"
+  name: "SystemSchedulerJob"
 });
 
 const {
@@ -33,7 +33,7 @@ const {
   handleSizeChange,
   handleCurrentChange,
   STATUS_RUNNING
-} = useQuartz();
+} = useSchedulerJob();
 </script>
 
 <template>

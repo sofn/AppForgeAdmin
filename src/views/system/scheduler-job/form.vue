@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
 import { message } from "@/utils/message";
-import { validateCron } from "@/api/quartz";
+import { validateCron } from "@/api/scheduler";
 import type { FormRules } from "element-plus";
-import type { QuartzFormProps } from "./utils/types";
+import type { SchedulerFormProps } from "./utils/types";
 
-const props = withDefaults(defineProps<QuartzFormProps>(), {
+const props = withDefaults(defineProps<SchedulerFormProps>(), {
   formInline: () => ({
     jobName: "",
     jobGroup: "DEFAULT",
@@ -95,7 +95,7 @@ defineExpose({ getRef });
       <el-input
         v-model="newFormInline.beanName"
         clearable
-        placeholder="Spring Bean 名称（如 demoQuartzJob）"
+        placeholder="Spring Bean 名称（如 demoSchedulerJob）"
       />
     </el-form-item>
 

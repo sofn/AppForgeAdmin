@@ -1,5 +1,5 @@
-// Mock Quartz endpoints so the UI works without a real backend.
-// Mirrors the response envelope of the real backend (/quartz/*).
+// Mock scheduler-job endpoints so the UI works without a real backend.
+// Mirrors the response envelope of the real backend (/admin/scheduler-job/*).
 import { defineFakeRoute } from "vite-plugin-fake-server/client";
 
 type Job = {
@@ -41,7 +41,7 @@ const jobs: Job[] = [
     jobName: "demo-hello",
     jobGroup: "DEFAULT",
     description: "Demo: prints hello every 30s",
-    beanName: "demoQuartzJob",
+    beanName: "demoSchedulerJob",
     methodName: "helloWorld",
     methodParams: "",
     cron: "0/30 * * * * ?",
@@ -60,18 +60,20 @@ function now(): string {
 
 export default defineFakeRoute([
   {
-    url: "/quartz/list",
-    method: "post",
-    response: ({ body }) => {
-      const jobName = body?.jobName ?? "";
-      const status = body?.status ?? null;
+    url: "/admin/scheduler-job",
+    method: "get",
+    response: ({ query }) => {
+      const jobName = String(query?.jobName ?? "");
+      const status = query?.status;
       const filtered = jobs.filter(
         j =>
           (!jobName || j.jobName.includes(jobName)) &&
-          (status === null || status === undefined || j.status === status)
+          (status === null ||
+            status === undefined ||
+            String(j.status) === String(status))
       );
-      const currentPage = body?.currentPage ?? 1;
-      const pageSize = body?.pageSize ?? 10;
+      const currentPage = Number(query?.currentPage ?? 1);
+      const pageSize = Number(query?.pageSize ?? 10);
       const start = (currentPage - 1) * pageSize;
       return {
         code: 0,
@@ -86,7 +88,7 @@ export default defineFakeRoute([
     }
   },
   {
-    url: "/quartz/add",
+    url: "/admin/scheduler-job/add",
     method: "post",
     response: ({ body }) => {
       const id = nextJobId++;
@@ -109,7 +111,7 @@ export default defineFakeRoute([
     }
   },
   {
-    url: "/quartz/update/:id",
+    url: "/admin/scheduler-job/update/:id",
     method: "put",
     response: ({ params, body }) => {
       const id = Number(params.id);
@@ -120,7 +122,7 @@ export default defineFakeRoute([
     }
   },
   {
-    url: "/quartz/delete/:id",
+    url: "/admin/scheduler-job/:id",
     method: "delete",
     response: ({ params }) => {
       const id = Number(params.id);
@@ -130,7 +132,7 @@ export default defineFakeRoute([
     }
   },
   {
-    url: "/quartz/pause/:id",
+    url: "/admin/scheduler-job/pause/:id",
     method: "post",
     response: ({ params }) => {
       const id = Number(params.id);
@@ -143,7 +145,7 @@ export default defineFakeRoute([
     }
   },
   {
-    url: "/quartz/resume/:id",
+    url: "/admin/scheduler-job/resume/:id",
     method: "post",
     response: ({ params }) => {
       const id = Number(params.id);
@@ -156,7 +158,7 @@ export default defineFakeRoute([
     }
   },
   {
-    url: "/quartz/run/:id",
+    url: "/admin/scheduler-job/run/:id",
     method: "post",
     response: ({ params }) => {
       const id = Number(params.id);
@@ -182,12 +184,13 @@ export default defineFakeRoute([
     }
   },
   {
-    url: "/quartz/log/list",
-    method: "post",
-    response: ({ body }) => {
-      const filtered = logs.filter(l => l.jobId === body.jobId);
-      const currentPage = body?.currentPage ?? 1;
-      const pageSize = body?.pageSize ?? 10;
+    url: "/admin/scheduler-job/log",
+    method: "get",
+    response: ({ query }) => {
+      const jobId = Number(query?.jobId);
+      const filtered = logs.filter(l => l.jobId === jobId);
+      const currentPage = Number(query?.currentPage ?? 1);
+      const pageSize = Number(query?.pageSize ?? 10);
       const start = (currentPage - 1) * pageSize;
       return {
         code: 0,
@@ -202,7 +205,7 @@ export default defineFakeRoute([
     }
   },
   {
-    url: "/quartz/validate-cron",
+    url: "/admin/scheduler-job/validate-cron",
     method: "post",
     response: ({ body }) => {
       // simple heuristic: 6-7 space-separated tokens with ? or digits

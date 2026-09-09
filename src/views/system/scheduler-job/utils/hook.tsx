@@ -7,28 +7,28 @@ import { addDialog } from "@/components/ReDialog";
 import type { PaginationProps } from "@pureadmin/table";
 import { deviceDetection } from "@pureadmin/utils";
 import {
-  listQuartzJobs,
-  addQuartzJob,
-  updateQuartzJob,
-  deleteQuartzJob,
-  pauseQuartzJob,
-  resumeQuartzJob,
-  runQuartzJob,
-  type QuartzJob
-} from "@/api/quartz";
-import type { QuartzFormItemProps } from "./types";
+  listSchedulerJobs,
+  addSchedulerJob,
+  updateSchedulerJob,
+  deleteSchedulerJob,
+  pauseSchedulerJob,
+  resumeSchedulerJob,
+  runSchedulerJob,
+  type SchedulerJob
+} from "@/api/scheduler";
+import type { SchedulerFormItemProps } from "./types";
 import { reactive, ref, onMounted, h } from "vue";
 
 const STATUS_PAUSED = 1;
 const STATUS_RUNNING = 2;
 
-export function useQuartz() {
+export function useSchedulerJob() {
   const form = reactive({
     jobName: "",
     status: undefined as number | undefined
   });
   const formRef = ref();
-  const dataList = ref<QuartzJob[]>([]);
+  const dataList = ref<SchedulerJob[]>([]);
   const loading = ref(true);
   const pagination = reactive<PaginationProps>({
     total: 0,
@@ -73,7 +73,7 @@ export function useQuartz() {
   async function onSearch() {
     loading.value = true;
     try {
-      const { code, data } = await listQuartzJobs({
+      const { code, data } = await listSchedulerJobs({
         jobName: form.jobName,
         status: form.status,
         currentPage: pagination.currentPage,
@@ -94,7 +94,7 @@ export function useQuartz() {
     onSearch();
   }
 
-  function openDialog(title: "新增" | "编辑" = "新增", row?: QuartzJob) {
+  function openDialog(title: "新增" | "编辑" = "新增", row?: SchedulerJob) {
     addDialog({
       title: `${title}定时任务`,
       props: {
@@ -119,18 +119,18 @@ export function useQuartz() {
       contentRenderer: () => h(editForm, { ref: formRef, formInline: null }),
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
-        const curData = options.props.formInline as QuartzFormItemProps;
+        const curData = options.props.formInline as SchedulerFormItemProps;
         FormRef.validate(async (valid: boolean) => {
           if (!valid) return;
           if (title === "新增") {
-            const resp = await addQuartzJob(curData);
+            const resp = await addSchedulerJob(curData);
             if (resp.code === 0) {
               message(`已新增定时任务 ${curData.jobName}`, { type: "success" });
               done();
               onSearch();
             }
           } else {
-            const resp = await updateQuartzJob(row!.id, curData);
+            const resp = await updateSchedulerJob(row!.id, curData);
             if (resp.code === 0) {
               message(`已更新定时任务 ${curData.jobName}`, { type: "success" });
               done();
@@ -142,7 +142,7 @@ export function useQuartz() {
     });
   }
 
-  async function handleDelete(row: QuartzJob) {
+  async function handleDelete(row: SchedulerJob) {
     await ElMessageBox.confirm(
       `确认要删除定时任务 <strong>${row.jobName}</strong> 吗？`,
       "系统提示",
@@ -154,37 +154,37 @@ export function useQuartz() {
         draggable: true
       }
     );
-    const { code } = await deleteQuartzJob(row.id);
+    const { code } = await deleteSchedulerJob(row.id);
     if (code === 0) {
       message(`已删除 ${row.jobName}`, { type: "success" });
       onSearch();
     }
   }
 
-  async function handlePause(row: QuartzJob) {
-    const { code } = await pauseQuartzJob(row.id);
+  async function handlePause(row: SchedulerJob) {
+    const { code } = await pauseSchedulerJob(row.id);
     if (code === 0) {
       message(`已暂停 ${row.jobName}`, { type: "success" });
       onSearch();
     }
   }
 
-  async function handleResume(row: QuartzJob) {
-    const { code } = await resumeQuartzJob(row.id);
+  async function handleResume(row: SchedulerJob) {
+    const { code } = await resumeSchedulerJob(row.id);
     if (code === 0) {
       message(`已恢复 ${row.jobName}`, { type: "success" });
       onSearch();
     }
   }
 
-  async function handleRun(row: QuartzJob) {
-    const { code } = await runQuartzJob(row.id);
+  async function handleRun(row: SchedulerJob) {
+    const { code } = await runSchedulerJob(row.id);
     if (code === 0) {
       message(`已触发 ${row.jobName}`, { type: "success" });
     }
   }
 
-  function handleViewLog(row: QuartzJob) {
+  function handleViewLog(row: SchedulerJob) {
     addDialog({
       title: `执行日志: ${row.jobName}`,
       width: "70%",
